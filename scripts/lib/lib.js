@@ -41,7 +41,7 @@ function wrapPartInDiv(part, number) {
  * @return {string|null}
  */
 function convertToMultiPart(message) {
-    const flipRe = /\n?\[flip\]\n?/;
+    const flipRe = /(?:<p>)?\s*\[flip\]\s*(?:<\/p>)?/;
     if (!flipRe.test(message)) return;
 
     let parts = message.split(flipRe);
