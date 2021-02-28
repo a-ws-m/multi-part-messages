@@ -1,4 +1,6 @@
-![](https://img.shields.io/badge/Foundry-v0.7.9-informational)
+# Multi-part Messages
+
+![Foundry shield](https://img.shields.io/badge/Foundry-v0.7.9-informational)
 <!--- Downloads @ Latest Badge -->
 <!--- replace <user>/<repo> with your username/repository -->
 <!--- ![Latest Release Download Count](https://img.shields.io/github/downloads/<user>/<repo>/latest/module.zip) -->
@@ -7,47 +9,40 @@
 <!--- replace <your-module-name> with the `name` in your manifest -->
 <!--- ![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2F<your-module-name>&colorB=4aa94a) -->
 
+This module enables divding chat messages into multiple parts. The next part of a message is revealed by double clicking.
+This is useful for implementing spell cards with images, for example, as the cards can be flipped over to reveal flavour text, rather
+than keeping the image and text visible at all times.
 
-# How to use this Template to create a versioned Release
+## Usage
 
-1. Open your repository's releases page.
+After installing the module, type a message in chat and separate the "parts" of the message like so:
 
-![Where to click to open repository releases.](https://user-images.githubusercontent.com/7644614/93409301-9fd25080-f864-11ea-9e0c-bdd09e4418e4.png)
+``[flip]Hello[flip]world![flip]``
 
-2. Click "Draft a new release"
+This example will produce the text `Hello`, which you can double click to change to `world!`.
+Note that you need to start and end your message with `[flip]`, as well as the `[flip]`
+in the middle to separate the two parts of the message.
 
-![Draft a new release button.](https://user-images.githubusercontent.com/7644614/93409364-c1333c80-f864-11ea-89f1-abfcb18a8d9f.png)
+Using this on item or spell cards is almost the same. Let's look at an example:
 
-3. Fill out the release version as the tag name.
+1. Fill in the card's flavour text as per usual. When you're satisfied with the flavour text, click the
+button to edit the flavour text source code.
 
-## <span color="red">Do not prefix your tag name with a `v`.</span>
+    ![Source code edit button](img/initial-mace-text.png)
 
-If you want to add details at this stage you can, or you can always come back later and edit them.
+2. Add `[flip]` delimiters, just like with the chat messages example. Remember to start and finish the message with `[flip]`s.
 
-![Release Creation Form](https://user-images.githubusercontent.com/7644614/93409543-225b1000-f865-11ea-9a19-f1906a724421.png)
+    ![Source code with flip syntax](img/mace-source.png)
 
-4. Hit submit.
+3. Save the changes to the source code by pressing the blue save button, and then save the flavour text as a whole.
 
-5. Wait a few minutes.
+    ![Flavour text save  button](img/mace-after-source-edit.png)
 
-A Github Action will run to populate the `module.json` and `module.zip` with the correct urls that you can then use to distribute this release. You can check on its status in the "Actions" tab.
+4. Use the item as per usual. You can double click on the flavour text in chat to flip to the second part of the description.
 
-![Actions Tab](https://user-images.githubusercontent.com/7644614/93409820-c1800780-f865-11ea-8c6b-c3792e35e0c8.png)
-
-6. Grab the module.json url from the release's details page.
-
-![image](https://user-images.githubusercontent.com/7644614/93409960-10c63800-f866-11ea-83f6-270cc5d10b71.png)
-
-This `module.json` will only ever point at this release's `module.zip`, making it useful for sharing a specific version for compatibility purposes.
-
-7. You can use the url `https://github.com/<user>/<repo>/releases/latest/download/module.json` to refer to the manifest.
-
-This is the url you want to use to install the module typically, as it will get updated automatically.
-
-
-# FoundryVTT Module
-
-Does something, probably
+   ![Side one of the flavour text in chat](img/mace-side-0.png)
+   ![Side two of the flavour text in chat](img/mace-side-1.png)
 
 ## Changelog
 
+1.0.0: First release!
