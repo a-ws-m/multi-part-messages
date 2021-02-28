@@ -1,6 +1,15 @@
 "use strict";
 
 /**
+ * Returns the foundry version
+ *
+ * @return {number | string | undefined}
+ */
+function getFoundryVersion() {
+    return game?.data?.version;
+}
+
+/**
  * Returns if the foundry version is 0.8.x
  *
  * @return {boolean}
@@ -32,28 +41,18 @@ function wrapPartInDiv(part, number) {
  * @return {string|null}
  */
 function convertToMultiPart(message) {
-    const flipRe = /\n\[flip\]\n/;
+    const flipRe = /\n?\[flip\]\n?/;
     if (!flipRe.test(message)) return;
 
     let parts = message.split(flipRe);
+    if (parts.length < 4) return;
 
-    let new_message = "";
-    parts.forEach((value, index, _0) => {
-        new_message += wrapPartInDiv(value, index);
-    });
+    for (let counter = 0; counter < parts.length - 2; counter++) {
+        let index = counter + 1;
+        parts[index] = wrapPartInDiv(parts[index], counter);
+    }
 
-    return new_message;
+    return parts.join("");
 }
 
-/**
- * Cycles the 'active' component of a multi-part message.
- */
-function changeActivePart() {
-    let parts = $(this).parent().children();
-    $this = $(this).toggleClass("flip-active");
-    parts
-        .eq((parts.index($this) + 1) % parts.length)
-        .toggleClass("flip-active");
-}
-
-export { isFoundry8, convertToMultiPart, changeActivePart };
+export { isFoundry8, convertToMultiPart };

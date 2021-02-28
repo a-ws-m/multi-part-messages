@@ -1,17 +1,15 @@
 {
-  "name": "module",
-  "title": "New Module",
-  "description": "",
-  "version": "This is auto replaced",
-  "library": "false",
+  "name": "multi-part-messages",
+  "title": "Multi-part messages",
+  "description": "Adds support for messages with multiple, cyclable parts in chat.",
+  "version": "0.0.1",
   "manifestPlusVersion": "1.0.0",
-  "minimumCoreVersion": "0.7.9",
-  "compatibleCoreVersion": "0.7.9",
+  "minimumCoreVersion": "0.7.5",
+  "compatibleCoreVersion": "1.0.0",
   "authors": [
     {
-      "name": "The League of Extraordinary FVTT Developers",
-      "url": "https://github.com/League-of-Foundry-Developers",
-      "discord": "discordID#0001"
+      "name": "Alex Moriarty",
+      "url": "https://github.com/a-ws-m"
     }
   ],
   "dependencies": [
@@ -24,7 +22,6 @@
     "/scripts/module.js"
   ],
   "scripts": [
-    "/scripts/lib/lib.js"
   ],
   "styles": [
     "/styles/module.css"

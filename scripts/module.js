@@ -1,6 +1,6 @@
 "use strict";
 
-import { isFoundry8, convertToMultiPart, changeActivePart } from "lib/lib.js";
+import { isFoundry8, convertToMultiPart } from "./lib/lib.js";
 
 Hooks.once("init", async function () {});
 
@@ -20,10 +20,21 @@ Hooks.on("preCreateChatMessage", (message, options) => {
 });
 
 Hooks.on("renderChatMessage", (_0, html) => {
-    const flipContainer = html?.[0]?.querySelector("flip-active");
-    if (!flipContainer) return;
+    const content = html?.[0] ?? null;
+    if (!content) return;
+
+    let flipContainers = content.querySelectorAll(".flip-container");
+    if (!flipContainers) return;
 
     // everytime a message is rendered in chat, if it's a flip message we add
     // the double click to cycle
-    $(flipContainer).dblclick(changeActivePart);
+    for (let container of flipContainers) {
+        container.addEventListener("dblclick", () => {
+            $(container).toggleClass("flip-active");
+            let parts = $(container).parent().find(".flip-container");
+            parts
+                .eq((parts.index($(container)) + 1) % parts.length)
+                .toggleClass("flip-active");
+        });
+    }
 });
