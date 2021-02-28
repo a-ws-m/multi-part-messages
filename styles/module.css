@@ -1,0 +1,7 @@
+.flip-container {
+    display: none;
+}
+
+.flip-container.flip-active {
+    display: contents;
+}
