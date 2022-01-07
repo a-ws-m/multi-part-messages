@@ -1,13 +1,13 @@
 "use strict";
 
-import { isFoundry8, convertToMultiPart } from "./lib/lib.js";
+import { versionGt8, convertToMultiPart } from "./lib/lib.js";
 
 Hooks.once("init", async function () {});
 
 Hooks.once("ready", async function () {});
 
 Hooks.on("preCreateChatMessage", (message, options) => {
-    const messageSource = isFoundry8() ? message.data._source : message;
+    const messageSource = versionGt8() ? message.data._source : message;
 
     // if a message has flip syntax, wrap the correct bits in containers
     const content = convertToMultiPart(messageSource.content);

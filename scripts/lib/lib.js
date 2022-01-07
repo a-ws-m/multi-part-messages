@@ -3,20 +3,27 @@
 /**
  * Returns the foundry version
  *
- * @return {number | string | undefined}
+ * @return {string}
  */
 function getFoundryVersion() {
-    return game?.data?.version;
+    return game?.data?.version || game.version;
 }
 
 /**
- * Returns if the foundry version is 0.8.x
+ * Returns if the foundry version is >= 0.8.0
  *
  * @return {boolean}
  */
-function isFoundry8() {
+function versionGt8() {
     const foundryVersion = getFoundryVersion();
-    return foundryVersion >= "0.8.0" && foundryVersion < "0.9.0";
+    const versionRe = /(\d+)\.(\d+)/g;
+    const versionParts = versionRe.exec(foundryVersion);
+    if (versionParts[0] === "0") {
+        // Semantic versioning used before v9; this should be 0.8 or less
+        return Number(versionParts[1]) >= 8;
+    }
+    // Not semantic versioning -- v9 or later
+    return true;
 }
 
 /**
@@ -55,4 +62,4 @@ function convertToMultiPart(message) {
     return parts.join("");
 }
 
-export { isFoundry8, convertToMultiPart };
+export { versionGt8, convertToMultiPart };
