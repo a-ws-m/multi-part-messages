@@ -17,7 +17,7 @@ function getFoundryVersion() {
 function versionGt8() {
     const foundryVersion = getFoundryVersion();
     const versionRe = /(\d+)\.(\d+)/g;
-    const versionParts = foundryVersion.exec(versionRe);
+    const versionParts = versionRe.exec(foundryVersion);
     if (versionParts[0] === "0") {
         // Semantic versioning used before v9; this should be 0.8 or less
         return Number(versionParts[1]) >= 8;
