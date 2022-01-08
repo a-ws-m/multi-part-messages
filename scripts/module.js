@@ -1,10 +1,39 @@
 "use strict";
 
-import { versionGt8, convertToMultiPart } from "./lib/lib.js";
+import { versionGt8, convertToMultiPart, getItemImages } from "./lib/lib.js";
 
-Hooks.once("init", async function () {});
+// https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types
+const imageFileTypes = ["apng", "avif", "gif", "jpg", "jpeg", "jfif", "pjpeg", "pjp", "png", "svg", "webp", "bmp", "ico", "cur", "tif", "tiff"];
+let itemImages = [];
 
-Hooks.once("ready", async function () {});
+Hooks.once("init", async function () {
+    game.settings.register("multi-part-messages", "itemImagesDirectory", {
+        name: "Item Images Directory",
+        hint: "Where to look for item card flippable images. Leave empty to disable this behaviour.",
+        scope: "world",
+        config: true,
+        default: "",
+        type: String,
+        filePicker: true,
+        onChange: (dir) => getItemImages(dir),
+    });
+    game.settings.register("multi-part-messages", "itemImagesSource", {
+        name: "Item Images Directory Source",
+        scope: "world",
+        config: true,
+        type: String,
+        choices: {
+            data: "Foundry Data",
+            forgevtt: "Forge Assets Library",
+            s3: "AWS S3 Bucket",
+        },
+        onChange: updateItemImages,
+    });
+});
+
+Hooks.once("setup", async function () {
+    updateItemImages();
+});
 
 Hooks.on("preCreateChatMessage", (message, options) => {
     const messageSource = versionGt8() ? message.data._source : message;
@@ -38,3 +67,45 @@ Hooks.on("renderChatMessage", (_0, html) => {
         });
     }
 });
+
+
+/**
+ * Wrapper for `getItemImages()` that determines the item images directory from game settings.
+ * 
+ */
+async function updateItemImages() {
+    const itemImagesDir = game.settings.get("multi-part-messages", "itemImagesDirectory");
+    getItemImages(itemImagesDir);
+}
+
+/**
+ * Get the list of formatted image names and paths in the item images directory.
+ * 
+ * @param {string} directory - where to search for item card images.
+ * 
+ * @return {{name: string, path: string}[]} 
+ */
+async function getItemImages(directory) {
+    if (directory === "") {
+        itemImages = [];
+        return itemImages;
+    }
+
+    const source = game.settings.get("multi-part-messages", "itemImagesSource");
+    let browseOptions = {};
+    if (source === "s3") {
+        const bucketContainer = await FilePicker.browse(source, directory);
+        const bucket = bucketContainer.dirs[0];
+        browseOptions = { bucket };
+    }
+
+    const itemCardDirArray = await FilePicker.browse(source, directory, browseOptions);
+    if (itemCardDirArray.target !== directory) {
+        throw "FilePicker target did not match `itemImagesDirectory`."
+    }
+
+    let itemImagesBuffer = [];
+    for (let file of itemCardDirArray.files) {
+
+    }
+}
