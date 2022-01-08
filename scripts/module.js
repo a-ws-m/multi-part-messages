@@ -10,6 +10,7 @@ const imageFileTypes = ["apng", "avif", "gif", "jpg", "jpeg", "jfif", "pjpeg", "
  */
 const emptyItemImages = () => {return {names: [], paths: []};};
 let itemImages = emptyItemImages();
+const debounceReload = debounce(() => window.location.reload(), 100);
 
 Hooks.once("init", async function () {
     game.settings.register(MODULE_NAME, "itemImagesDirectory", {
@@ -33,7 +34,7 @@ Hooks.once("init", async function () {
             s3: game.i18n.localize("MULTI-PART-MESSAGES.source.s3"),
         },
         default: "data",
-        onChange: () => window.location.reload(),
+        onChange: debounceReload,
     });
     game.settings.register(MODULE_NAME, "itemImagesFront", {
         name: game.i18n.localize("MULTI-PART-MESSAGES.ItemImagesFrontTitle"),
@@ -42,12 +43,13 @@ Hooks.once("init", async function () {
         config: true,
         type: Boolean,
         default: false,
-        onChange: () => window.location.reload(),
+        onChange: debounceReload,
     });
 });
 
 Hooks.on("setup", async function () {
-    updateItemImages();
+    const itemImagesDir = game.settings.get(MODULE_NAME, "itemImagesDirectory");
+    getItemImages(itemImagesDir);
 });
 
 Hooks.on("preCreateChatMessage", (message, options) => {
