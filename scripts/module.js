@@ -1,10 +1,14 @@
 "use strict";
 
-import { versionGt8, convertToMultiPart, getItemImages } from "./lib/lib.js";
+import { versionGt8, convertToMultiPart, formatItemName, addItemImage } from "./lib/lib.js";
 
 // https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types
 const imageFileTypes = ["apng", "avif", "gif", "jpg", "jpeg", "jfif", "pjpeg", "pjp", "png", "svg", "webp", "bmp", "ico", "cur", "tif", "tiff"];
-let itemImages = [];
+/**
+ * @returns {{names: Array<String>, paths: Array<String>}}
+ */
+const emptyItemImages = () => {return {names: [], paths: []};};
+let itemImages = emptyItemImages();
 
 Hooks.once("init", async function () {
     game.settings.register("multi-part-messages", "itemImagesDirectory", {
@@ -27,11 +31,12 @@ Hooks.once("init", async function () {
             forgevtt: "Forge Assets Library",
             s3: "AWS S3 Bucket",
         },
-        onChange: updateItemImages,
+        default: "data",
+        onChange: (src) => updateItemImages(),
     });
 });
 
-Hooks.once("setup", async function () {
+Hooks.on("setup", async function () {
     updateItemImages();
 });
 
@@ -52,8 +57,16 @@ Hooks.on("renderChatMessage", (_0, html) => {
     const content = html?.[0] ?? null;
     if (!content) return;
 
+    const itemHeader = content.querySelector(".item-name");
+    if (itemHeader) {
+        const itemName = formatItemName(itemHeader.innerText);
+        const imageIndex = itemImages.names.indexOf(itemName);
+        if (imageIndex !== -1) {
+            addItemImage(content, itemImages.paths[imageIndex]);
+        }
+    }
+
     let flipContainers = content.querySelectorAll(".flip-container");
-    if (!flipContainers) return;
 
     // everytime a message is rendered in chat, if it's a flip message we add
     // the double click to cycle
@@ -83,20 +96,20 @@ async function updateItemImages() {
  * 
  * @param {string} directory - where to search for item card images.
  * 
- * @return {{name: string, path: string}[]} 
+ * @returns {{names: Array<String>, paths: Array<String>}}
  */
 async function getItemImages(directory) {
     if (directory === "") {
-        itemImages = [];
+        itemImages = emptyItemImages();
         return itemImages;
     }
 
     const source = game.settings.get("multi-part-messages", "itemImagesSource");
-    let browseOptions = {};
+    let browseOptions = {extensions: imageFileTypes.map((str) => "." + str)};
     if (source === "s3") {
         const bucketContainer = await FilePicker.browse(source, directory);
         const bucket = bucketContainer.dirs[0];
-        browseOptions = { bucket };
+        browseOptions.bucket = bucket;
     }
 
     const itemCardDirArray = await FilePicker.browse(source, directory, browseOptions);
@@ -104,8 +117,17 @@ async function getItemImages(directory) {
         throw "FilePicker target did not match `itemImagesDirectory`."
     }
 
-    let itemImagesBuffer = [];
+    let itemNamesBuffer = [];
+    let itemImagePathsBuffer = [];
+    const fileRegex = /(?:^|\/)([^\/]+)\.(?:.+)$/;
     for (let file of itemCardDirArray.files) {
-
+        const match = fileRegex.exec(file);
+        if (match) {
+            itemNamesBuffer.push(formatItemName(match[1]));
+            itemImagePathsBuffer.push(file);
+        }
     }
+
+    itemImages = {names: itemNamesBuffer, paths: itemImagePathsBuffer};
+    return itemImages;
 }

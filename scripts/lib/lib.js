@@ -62,4 +62,29 @@ function convertToMultiPart(message) {
     return parts.join("");
 }
 
-export { versionGt8, convertToMultiPart };
+/**
+ * Add a flippable item image to a chat card.
+ * 
+ * @param {HTMLElement} content The original chat card content.
+ * @param {string} itemPath The path to the image.
+ * 
+ */
+function addItemImage(content, imagePath) {
+    $(content).find(".card-content").children().wrapAll(`<div class="flip-container flip-active" />`);
+    const imageDom = `<div class="flip-container"><img src="${imagePath}" width="100%" /></div>`;
+    $(content).find(".card-content").append(imageDom);
+}
+
+/**
+ * Simplify an item name
+ * @description Remove whitespace and convert to lower case
+ * 
+ * @param {string} itemName The item name to format
+ * 
+ * @returns {string} The formatted name.
+ */
+function formatItemName(itemName) {
+    return itemName.replace(/\s/g, "").toLowerCase();
+}
+
+export { versionGt8, convertToMultiPart, formatItemName, addItemImage };
