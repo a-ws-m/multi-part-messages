@@ -13,8 +13,8 @@ let itemImages = emptyItemImages();
 
 Hooks.once("init", async function () {
     game.settings.register(MODULE_NAME, "itemImagesDirectory", {
-        name: "Item Images Directory",
-        hint: "Where to look for item card flippable images. Leave empty to disable this behaviour.",
+        name: game.i18n.localize("MULTI-PART-MESSAGES.ItemImagesDirectoryTitle"),
+        hint: game.i18n.localize("MULTI-PART-MESSAGES.ItemImagesDirectoryHint"),
         scope: "world",
         config: true,
         default: "",
@@ -23,21 +23,21 @@ Hooks.once("init", async function () {
         onChange: (dir) => getItemImages(dir),
     });
     game.settings.register(MODULE_NAME, "itemImagesSource", {
-        name: "Item Images Directory Source",
+        name: game.i18n.localize("MULTI-PART-MESSAGES.source.name"),
         scope: "world",
         config: true,
         type: String,
         choices: {
-            data: "Foundry Data",
-            forgevtt: "Forge Assets Library",
-            s3: "AWS S3 Bucket",
+            data: game.i18n.localize("MULTI-PART-MESSAGES.source.data"),
+            forgevtt: game.i18n.localize("MULTI-PART-MESSAGES.source.forgevtt"),
+            s3: game.i18n.localize("MULTI-PART-MESSAGES.source.s3"),
         },
         default: "data",
         onChange: () => window.location.reload(),
     });
     game.settings.register(MODULE_NAME, "itemImagesFront", {
-        name: "Display Item Images First",
-        hint: "Whether to display flippable item images first (rather than item description text).",
+        name: game.i18n.localize("MULTI-PART-MESSAGES.ItemImagesFrontTitle"),
+        hint: game.i18n.localize("MULTI-PART-MESSAGES.ItemImagesFrontHint"),
         scope: "client",
         config: true,
         type: Boolean,
