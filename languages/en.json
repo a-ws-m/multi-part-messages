@@ -9,6 +9,7 @@
             "s3": "AWS S3 Bucket"
         },
         "ItemImagesFrontTitle": "Display Item Images First",
-        "ItemImagesFrontHint": "Whether to display flippable item images first (rather than item description text)."
+        "ItemImagesFrontHint": "Whether to display flippable item images first (rather than item description text).",
+        "FlipText": "Flip"
     }
 }
