@@ -1,3 +1,14 @@
 {
-    "MODULE.hello": "hello"
+    "MULTI-PART-MESSAGES": {
+        "ItemImagesDirectoryTitle": "Item Images Directory",
+        "ItemImagesDirectoryHint": "Where to look for item card flippable images. Leave empty to disable this behaviour.",
+        "source": {
+            "name": "Item Images Directory Source",
+            "data": "Foundry Data",
+            "forgevtt": "Forge Assets Library",
+            "s3": "AWS S3 Bucket"
+        },
+        "ItemImagesFrontTitle": "Display Item Images First",
+        "ItemImagesFrontHint": "Whether to display flippable item images first (rather than item description text)."
+    }
 }
