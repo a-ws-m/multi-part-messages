@@ -82,12 +82,12 @@ function convertToMultiPart(message) {
 /**
  * Add a flippable item image to a chat card.
  * 
- * @param {HTMLElement} content The original chat card content.
+ * @param {jQuery object} content The original chat card content.
  * @param {string} itemPath The path to the image.
  * 
  */
 function addItemImage(content, imagePath) {
-    const cardContent = $(content).find(".card-content");
+    const cardContent = content.find(".card-content");
     const itemImageFirst = game.settings.get(MODULE_NAME, "itemImagesFront");
     cardContent.children().wrapAll(getFlipContainer(!itemImageFirst, true));
     const imageDom = $(`<img src="${imagePath}" width="100%" />`);

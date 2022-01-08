@@ -68,17 +68,18 @@ Hooks.on("preCreateChatMessage", (message, options) => {
 Hooks.on("renderChatMessage", (_0, html) => {
     const content = html?.[0] ?? null;
     if (!content) return;
+    const $content = $(content);
 
-    const itemHeader = content.querySelector(".item-name");
+    const itemHeader = $content.find(".item-name")[0];
     if (itemHeader) {
         const itemName = formatItemName(itemHeader.innerText);
         const imageIndex = itemImages.names.indexOf(itemName);
         if (imageIndex !== -1) {
-            addItemImage(content, itemImages.paths[imageIndex]);
+            addItemImage($content, itemImages.paths[imageIndex]);
         }
     }
 
-    let flipContainers = content.querySelectorAll(".flip-container");
+    let flipContainers = $content.find(".flip-container");
 
     // everytime a message is rendered in chat, if it's a flip message we add
     // the double click to cycle
