@@ -1,5 +1,7 @@
 "use strict";
 
+import { MODULE_NAME } from "./config.js";
+
 /**
  * Returns the foundry version
  *
@@ -27,6 +29,21 @@ function versionGt8() {
 }
 
 /**
+ * Get a flip container div element.
+ * 
+ * @param {boolean} active Whether the flip container should be active (visible)
+ * @param {boolean} asJQuery Whether to return the container as a JQuery element.
+ *  If `false` (default), returns a string.
+ * 
+ * @returns {jQuery object | string} The div element.
+ */
+function getFlipContainer(active, asJQuery) {
+    const flipContainer = $("<div />").addClass("flip-container");
+    if (active) flipContainer.addClass("flip-active");
+    return asJQuery ? flipContainer : flipContainer[0].outerHTML;
+}
+
+/**
  * Wraps part of a message in an appropriate divider
  *
  * @param {string} part The string component of the part of the message
@@ -35,9 +52,9 @@ function versionGt8() {
  * @return {string}
  */
 function wrapPartInDiv(part, number) {
-    return `<div class="flip-container${
-        number == 0 ? " flip-active" : ""
-    }">${part}</div>`;
+    const flipContainer = getFlipContainer(number === 0);
+    // Trim the terminating </div>
+    return flipContainer.slice(0, -6) + part + "</div>";
 }
 
 /**
@@ -62,4 +79,31 @@ function convertToMultiPart(message) {
     return parts.join("");
 }
 
-export { versionGt8, convertToMultiPart };
+/**
+ * Add a flippable item image to a chat card.
+ * 
+ * @param {HTMLElement} content The original chat card content.
+ * @param {string} itemPath The path to the image.
+ * 
+ */
+function addItemImage(content, imagePath) {
+    const cardContent = $(content).find(".card-content");
+    const itemImageFirst = game.settings.get(MODULE_NAME, "itemImagesFront");
+    cardContent.children().wrapAll(getFlipContainer(!itemImageFirst, true));
+    const imageDom = $(`<img src="${imagePath}" width="100%" />`);
+    cardContent.append(imageDom.wrap(getFlipContainer(itemImageFirst), true).parent());
+}
+
+/**
+ * Simplify an item name
+ * @description Remove whitespace and convert to lower case
+ * 
+ * @param {string} itemName The item name to format
+ * 
+ * @returns {string} The formatted name.
+ */
+function formatItemName(itemName) {
+    return itemName.replace(/\s/g, "").toLowerCase();
+}
+
+export { versionGt8, convertToMultiPart, formatItemName, addItemImage  };
