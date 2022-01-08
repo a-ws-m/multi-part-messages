@@ -1,5 +1,7 @@
 "use strict";
 
+import { MODULE_NAME } from "./config.js";
+
 /**
  * Returns the foundry version
  *
@@ -27,6 +29,21 @@ function versionGt8() {
 }
 
 /**
+ * Get a flip container div element.
+ * 
+ * @param {boolean} active Whether the flip container should be active (visible)
+ * @param {boolean} asJQuery Whether to return the container as a JQuery element.
+ *  If `false` (default), returns a string.
+ * 
+ * @returns {jQuery object | string} The div element.
+ */
+function getFlipContainer(active, asJQuery) {
+    const flipContainer = $("<div />").addClass("flip-container");
+    if (active) flipContainer.addClass("flip-active");
+    return asJQuery ? flipContainer : flipContainer[0].outerHTML;
+}
+
+/**
  * Wraps part of a message in an appropriate divider
  *
  * @param {string} part The string component of the part of the message
@@ -35,9 +52,9 @@ function versionGt8() {
  * @return {string}
  */
 function wrapPartInDiv(part, number) {
-    return `<div class="flip-container${
-        number == 0 ? " flip-active" : ""
-    }">${part}</div>`;
+    const flipContainer = getFlipContainer(number === 0);
+    // Trim the terminating </div>
+    return flipContainer.slice(0, -6) + part + "</div>";
 }
 
 /**
@@ -70,9 +87,11 @@ function convertToMultiPart(message) {
  * 
  */
 function addItemImage(content, imagePath) {
-    $(content).find(".card-content").children().wrapAll(`<div class="flip-container flip-active" />`);
-    const imageDom = `<div class="flip-container"><img src="${imagePath}" width="100%" /></div>`;
-    $(content).find(".card-content").append(imageDom);
+    const cardContent = $(content).find(".card-content");
+    const itemImageFirst = game.settings.get(MODULE_NAME, "itemImagesFront");
+    cardContent.children().wrapAll(getFlipContainer(!itemImageFirst, true));
+    const imageDom = $(`<img src="${imagePath}" width="100%" />`);
+    cardContent.append(imageDom.wrap(getFlipContainer(itemImageFirst), true).parent());
 }
 
 /**
@@ -87,4 +106,4 @@ function formatItemName(itemName) {
     return itemName.replace(/\s/g, "").toLowerCase();
 }
 
-export { versionGt8, convertToMultiPart, formatItemName, addItemImage };
+export { versionGt8, convertToMultiPart, formatItemName, addItemImage  };
