@@ -1,7 +1,7 @@
 "use strict";
 
 import { MODULE_NAME } from "./lib/config.js";
-import { versionGt8, convertToMultiPart, formatItemName, addItemImage } from "./lib/lib.js";
+import { versionGt8, convertToMultiPart, formatItemName, addItemImage, addFlipButton } from "./lib/lib.js";
 
 // https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types
 const imageFileTypes = ["apng", "avif", "gif", "jpg", "jpeg", "jfif", "pjpeg", "pjp", "png", "svg", "webp", "bmp", "ico", "cur", "tif", "tiff"];
@@ -79,19 +79,19 @@ Hooks.on("renderChatMessage", (_0, html) => {
         }
     }
 
-    let flipContainers = $content.find(".flip-container");
+    addFlipButton($content);
 
     // everytime a message is rendered in chat, if it's a flip message we add
     // the double click to cycle
-    for (let container of flipContainers) {
-        container.addEventListener("dblclick", () => {
-            $(container).toggleClass("flip-active");
-            let parts = $(container).parent().find(".flip-container");
-            parts
-                .eq((parts.index($(container)) + 1) % parts.length)
-                .toggleClass("flip-active");
-        });
-    }
+    // for (let container of flipContainers) {
+    //     container.addEventListener("dblclick", () => {
+    //         $(container).toggleClass("flip-active");
+    //         let parts = $(container).parent().find(".flip-container");
+    //         parts
+    //             .eq((parts.index($(container)) + 1) % parts.length)
+    //             .toggleClass("flip-active");
+    //     });
+    // }
 });
 
 

@@ -82,12 +82,12 @@ function convertToMultiPart(message) {
 /**
  * Add a flippable item image to a chat card.
  * 
- * @param {jQuery object} content The original chat card content.
+ * @param {jQuery object} $content The original chat card content.
  * @param {string} itemPath The path to the image.
  * 
  */
-function addItemImage(content, imagePath) {
-    const cardContent = content.find(".card-content");
+function addItemImage($content, imagePath) {
+    const cardContent = $content.find(".card-content");
     const itemImageFirst = game.settings.get(MODULE_NAME, "itemImagesFront");
     cardContent.children().wrapAll(getFlipContainer(!itemImageFirst, true));
     const imageDom = $(`<img src="${imagePath}" width="100%" />`);
@@ -106,4 +106,42 @@ function formatItemName(itemName) {
     return itemName.replace(/\s/g, "").toLowerCase();
 }
 
-export { versionGt8, convertToMultiPart, formatItemName, addItemImage  };
+/**
+ * Add a flip button to a chat message
+ * 
+ * @param {jQuery object} $chatContent The chat message content.
+ */
+function addFlipButton($chatContent) {
+    const $flipContainers = $chatContent.find(".flip-container");
+    if (!$flipContainers.length) return;
+
+    let $chatButtons = $chatContent.find(".card-buttons");
+    // We want to make sure there are some buttons after the content
+    if (!$chatButtons.length) {
+        let $contentDiv;
+        let contentName;
+        $chatContent.find("div").each(function() {
+            const match = this.className.match(/(\S+)-content/);
+            if (match) {
+                $contentDiv = $(this);
+                contentName = match[1];
+            }
+        });
+        const buttonsClass = (`${contentName}-buttons`);
+        const $buttonsDiv = $("<div />").addClass(buttonsClass);
+        $contentDiv.after($buttonsDiv);
+        $chatButtons = $chatContent.find("." + buttonsClass);
+    }
+
+    const $flipButton = $(`<button data-action="flip">${game.i18n.localize("MULTI-PART-MESSAGES.FlipText")}</button>`);
+    $chatButtons.append($flipButton);
+    $chatContent.find("button[data-action='flip']").click(() => {
+        const $currentActive = $flipContainers.filter(".flip-active").removeClass("flip-active");
+        const nextFlipIndex = ($flipContainers.index($currentActive) + 1) % $flipContainers.length;
+        $flipContainers
+            .eq(nextFlipIndex)
+            .addClass("flip-active");
+    });
+}
+
+export { versionGt8, convertToMultiPart, formatItemName, addItemImage, addFlipButton };
