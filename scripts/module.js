@@ -1,7 +1,7 @@
 "use strict";
 
 import { MODULE_NAME } from "./lib/config.js";
-import { versionGt8, convertToMultiPart, formatItemName, addItemImage } from "./lib/lib.js";
+import { versionGt8, convertToMultiPart, formatItemName, addItemImage, addFlipButton } from "./lib/lib.js";
 
 // https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types
 const imageFileTypes = ["apng", "avif", "gif", "jpg", "jpeg", "jfif", "pjpeg", "pjp", "png", "svg", "webp", "bmp", "ico", "cur", "tif", "tiff"];
@@ -68,29 +68,30 @@ Hooks.on("preCreateChatMessage", (message, options) => {
 Hooks.on("renderChatMessage", (_0, html) => {
     const content = html?.[0] ?? null;
     if (!content) return;
+    const $content = $(content);
 
-    const itemHeader = content.querySelector(".item-name");
+    const itemHeader = $content.find(".item-name")[0];
     if (itemHeader) {
         const itemName = formatItemName(itemHeader.innerText);
         const imageIndex = itemImages.names.indexOf(itemName);
         if (imageIndex !== -1) {
-            addItemImage(content, itemImages.paths[imageIndex]);
+            addItemImage($content, itemImages.paths[imageIndex]);
         }
     }
 
-    let flipContainers = content.querySelectorAll(".flip-container");
+    addFlipButton($content);
 
     // everytime a message is rendered in chat, if it's a flip message we add
     // the double click to cycle
-    for (let container of flipContainers) {
-        container.addEventListener("dblclick", () => {
-            $(container).toggleClass("flip-active");
-            let parts = $(container).parent().find(".flip-container");
-            parts
-                .eq((parts.index($(container)) + 1) % parts.length)
-                .toggleClass("flip-active");
-        });
-    }
+    // for (let container of flipContainers) {
+    //     container.addEventListener("dblclick", () => {
+    //         $(container).toggleClass("flip-active");
+    //         let parts = $(container).parent().find(".flip-container");
+    //         parts
+    //             .eq((parts.index($(container)) + 1) % parts.length)
+    //             .toggleClass("flip-active");
+    //     });
+    // }
 });
 
 
